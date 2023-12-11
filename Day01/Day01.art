@@ -1,0 +1,48 @@
+path: (get env "PWD") ++  "/input"
+
+getCalibrationValue: function[lines] [
+    sum: 0
+    loop lines 'line [
+        first:0
+        last: 0
+        loop split.every: 1 line 'char [
+            if numeric? char [
+                last: to :integer char
+                if zero? first -> first: last
+            ]
+        ]
+        value: (first * 10) + last
+        add 'sum value
+    ]
+
+    sum
+]
+
+print "P01: " ++ (to :string getCalibrationValue read.lines path)
+
+getAmendedCalibrationValue: function[contents] [
+    translations: #[
+        one:    "1"
+        two:    "2"
+        three:  "3"
+        four:   "4"
+        five:   "5"
+        six:    "6"
+        seven:  "7"
+        eight:  "8"
+        nine:   "9"
+    ]
+
+    loop (keys translations) 'key [
+        first: slice key 0 0
+        length: size key
+        last: slice key (length - 1) (length - 1)
+        num: get translations key
+        replacement: first ++ num ++ last
+        replace 'contents key replacement
+    ]
+
+    getCalibrationValue split.lines contents
+]
+
+print "P02: " ++ (to :string getAmendedCalibrationValue read.file path)
