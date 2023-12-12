@@ -1,0 +1,21 @@
+lines: read.lines relative "input"
+
+getP01Scores: function[] [
+    sum: 0
+    loop lines 'line [
+        data: last split.by:":" line
+        winners: map split.words first split.by:"|" data 'x -> to :integer x
+        mine: map split.words last split.by:"|" data 'x -> to :integer x
+        overlap: size intersection winners mine
+    
+        points: 0
+        if positive? overlap [
+            points: 2 ^ dec overlap
+        ]
+        sum: sum + points
+    ]
+
+    sum
+] 
+
+print ~"P01: |getP01Scores()|"
