@@ -1,21 +1,37 @@
-lines: read.lines relative "input"
+lines: read.lines relative "Day04P2.test"
 
-getP01Scores: function[] [
-    sum: 0
-    loop lines 'line [
-        data: last split.by:":" line
-        winners: map split.words first split.by:"|" data 'x -> to :integer x
-        mine: map split.words last split.by:"|" data 'x -> to :integer x
-        overlap: size intersection winners mine
-    
+matches: fold .seed:[] lines [acc, line] [
+    data: last split.by:":" line
+    winners: split.words first split.by:"|" data
+    mine: split.words last split.by:"|" data
+    acc ++ size intersection winners mine
+]
+
+getP01Result: function[] [
+    fold matches [acc, card] [
         points: 0
-        if positive? overlap [
-            points: 2 ^ dec overlap
+        if positive? card [
+            points: pow 2 dec card
         ]
-        sum: sum + points
+        acc + points
     ]
+]
 
-    sum
-] 
+print ~"P01: |getP01Result()|"
 
-print ~"P01: |getP01Scores()|"
+getP02Result: function[] [
+    originals: repeat 1 size matches
+
+    sum fold.with:'i .seed:originals matches [acc, card] [
+       if positive? card [
+        loop 1..card 'n [
+            pos: i + n
+            acc\[pos]: acc\[pos] + acc\[i]
+        ]
+       ]
+        print acc
+        acc
+    ]
+]
+
+print ~"P02: |getP02Result()|"
